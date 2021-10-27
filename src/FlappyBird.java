@@ -2,7 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
-public class Platformer implements KeyListener, Runnable {
+public class FlappyBird implements KeyListener, Runnable {
     boolean[][] board = new boolean[20][20];
     //boolean[][] snake = new boolean[10][10];
     //SnakePanel panel = new SnakePanel(snake);
@@ -22,7 +22,7 @@ public class Platformer implements KeyListener, Runnable {
     boolean left = false;
     boolean right = false;
 
-    JLabel youDie = new JLabel();
+    JLabel score = new JLabel();
 
     JLabel[] triangle = new JLabel[1000000];
     int triangleNum = 0;
@@ -39,23 +39,23 @@ public class Platformer implements KeyListener, Runnable {
 
     public static void main(String[] args) {  //main method
 
-        new Platformer();
+        new FlappyBird();
 
     }
 
-    public Platformer() {  //constructor
+    public FlappyBird() {  //constructor
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(600, 600);
+        frame.setSize(600, 500);
         frame.setLayout(null);
         frame.addKeyListener(this);
 
 
 
 
-        youDie.setLocation((frame.getWidth()/2) - 125, (frame.getHeight()/2) - 80);
-        youDie.setSize((500), (100));
-        youDie.setFont(new Font("SansSerif", Font.BOLD, 50));
-        frame.add(youDie);
+        score.setLocation((frame.getWidth()/2) - 125, (frame.getHeight()/2) - 80);
+        score.setSize((500), (100));
+        score.setFont(new Font("SansSerif", Font.BOLD, 50));
+        frame.add(score);
 
 
         label.setBounds(positionX, positionY, 50, 50);
@@ -65,7 +65,7 @@ public class Platformer implements KeyListener, Runnable {
 
         frame.add(label);
 
-        ground.setBounds(0, 500, 1000, 100);
+        ground.setBounds(0, 400, 1000, 200);
         ground.setBackground(Color.BLUE);
         ground.setOpaque(true);
 
@@ -76,19 +76,11 @@ public class Platformer implements KeyListener, Runnable {
             platform[i] = new JLabel();
             platform[i].setBounds(600, 700, 200, 50);
 
+            frame.add(platform[i]);
+
         }
 
-        platform[0].setBounds(300, 350, 200, 25);
-        platform[0].setBackground(Color.GREEN);
-        platform[0].setOpaque(true);
-        frame.add(platform[0]);
 
-        platform[1].setBounds(0, 150, 200, 25);
-        platform[1].setBackground(Color.GRAY);
-        platform[1].setOpaque(true);
-        frame.add(platform[1]);
-
-        addPlatform(2, 700, 300, 100, 25, 250, 50, 50);
 
         triangle(450, 350, 1);
         triangle(450, 449, -1);
@@ -106,24 +98,26 @@ public class Platformer implements KeyListener, Runnable {
         platform[i].setBounds(x, y, width, height);
         platform[i].setBackground(new Color(r, g, b));
         platform[i].setOpaque(true);
-        frame.add(platform[i]);
     }
 
     public void reset() {
 
-        running = false;
+        running = true;
 
-        youDie.setText(null);
+        //score.setText(null);
 
-        label.setBounds(50, 50, 50, 50);
-        label.setBackground(Color.BLACK);
-        label.setOpaque(true);
+        //label.setBounds(50, 50, 50, 50);
+        //label.setBackground(Color.BLACK);
+        //label.setOpaque(true);
+        int counter = 100;
+        int z = 0;
+        int scoreNum = -2;
     }
 
-    public void youDie() {
+    public void score() {
         running = false;
 
-        youDie.setText("You Die");
+        score.setText("You Die");
 
     }
 
@@ -141,9 +135,6 @@ public class Platformer implements KeyListener, Runnable {
                     triangle[triangleNum].setBounds(x + i, y + (int)(sharpness * (j + h)), 1, 1);
                     triangleX[triangleNum] = x + i;
                     triangleY[triangleNum] = y + (int)(sharpness * (j + h));
-                    triangle[triangleNum].setBackground(new Color(50, color, 255));
-                    triangle[triangleNum].setOpaque(true);
-                    frame.add(triangle[triangleNum]);
                     triangleNum++;
                     if (color < 255) {
                         colorDouble = (colorDouble + .05);
@@ -164,7 +155,7 @@ public class Platformer implements KeyListener, Runnable {
 
     public boolean touchingGround() {
         boolean touchingGround = false;
-        if (positionY >= ground.getY() - 55)
+        if (positionY >= ground.getY() - 50)
             touchingGround = true;
 
         return touchingGround;
@@ -174,7 +165,7 @@ public class Platformer implements KeyListener, Runnable {
         boolean touchingPlatform = false;
         int platformNum = 1000;
         for (int i = 0; i < platform.length; i++) {
-            if (label.getX() > platform[i].getX() - 50 + (int) move && label.getX() < platform[i].getX() + platform[i].getWidth() + (int) move && positionY >= platform[i].getY() - 60 && positionY <= platform[i].getY()) {
+            if (label.getX() > platform[i].getX() - 50 + (int) move && label.getX() < platform[i].getX() + platform[i].getWidth() + (int) move && positionY >= platform[i].getY() - 50 && positionY <= platform[i].getY()) {
                 touchingPlatform = true;
                 //System.out.println(true);
                 platformNum = i;
@@ -277,17 +268,8 @@ public class Platformer implements KeyListener, Runnable {
             t.start();
         }
 
-        if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-            left = true;
-        }
-        if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-            right = true;
-        }
         if (e.getKeyCode() == KeyEvent.VK_UP) {
-            if (touchingGround() || touchingPlatform()[0] == 1) {
-
                 jump = true;
-            }
         }
     }
 
@@ -298,29 +280,34 @@ public class Platformer implements KeyListener, Runnable {
 
     @Override
     public void run() {
+        int counter = 100;
+        int z = 0;
+        int scoreNum = -2;
 
         while (running && alive) {
 
-        if (touchingGround() && !jump) {
-            gravity = gravity * -1;
-            gravity = 0;
-            //System.out.println("on ground");
-            positionY = 450;
-        }
-
-            if (touchingPlatform()[0] == 1 && !jump) {
-                gravity = 0;
-                positionY = touchingPlatform()[2] - 50;
+            if (touchingGround()) {
+                System.out.println("you die");
+                running = false;
+                score.setText("You Die :(");
             }
 
-            if (touchingPlatformBottom()[0] == 1 && !jump) {
-                gravity = 0;
+            if (touchingPlatform()[0] == 1) {
+                System.out.println("you die");
+                running = false;
+                score.setText("You Die :(");
+            }
+
+            if (touchingPlatformBottom()[0] == 1) {
+                System.out.println("you die");
+                running = false;
+                score.setText("You Die :(");
             }
 
             touchingNum++;
 
             if (jump) {
-                gravity = -25;
+                gravity = -10;
                 //System.out.println(true);
             }
 
@@ -331,21 +318,54 @@ public class Platformer implements KeyListener, Runnable {
                 move = move - 15;
 
             for (int i = 0; i < 10; i++) {
-                platform[i].setLocation(platform[i].getX() + (int) move, platform[i].getY());
+                platform[i].setLocation(platform[i].getX() - 3, platform[i].getY());
+                //if (platform[i].getX() < -100)
             }
 
 
-        label.setLocation(225, positionY + (int)gravity);
+            label.setLocation(225, positionY + (int)gravity);
 
 
 
 
-        left = false;
-        right = false;
+            if (counter == 100) {
+                counter = 0;
+                System.out.println("spawn");
+
+
+
+                if (z == 8) {
+                    z = 0;
+                }
+
+                int y = (int) (Math.random() * 200);
+                z++;
+
+                addPlatform(z, 700, y * (-1), 100, 200, 250, 50, 50);
+                z++;
+                addPlatform(z, 700,  y * (-1) + 400, 100, 400, 250, 50, 50);
+
+            }
+
+            if (counter == 50) {
+                scoreNum++;
+                if (scoreNum > -1) {
+
+                    score.setText(Integer.toString(scoreNum));
+                }
+            }
+
+            counter++;
+
+
+
+
+            left = false;
+            right = false;
 
             jump = false;
 
-            positionX = positionX + (int)move;
+            positionX = positionX - 1;
             positionY = positionY + (int)gravity;
 
             gravity++;
@@ -354,7 +374,7 @@ public class Platformer implements KeyListener, Runnable {
             for (int i = 0; i < 10000; i++) {
                 if (triangleX[i] >= positionX && triangleX[i] <= positionX + 50 && triangleY[i] >= positionY && triangleY[i] <= positionY + 50) {
                     //System.out.println("you die");
-                    //youDie();
+                    //score();
                 }
             }
 

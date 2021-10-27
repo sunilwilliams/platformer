@@ -203,14 +203,14 @@ public class Breakout implements KeyListener, Runnable {
                 ballMoveX = ballMoveX * (-1);
 
             if (ballY >= frame.getHeight() - 25) {
-                //youDie.setText("You Lose");
-                //running = false;
-                ballMoveY = ballMoveY * (-1);
+                youDie.setText("You Lose");
+                running = false;
+                //ballMoveY = ballMoveY * (-1);
             }
 
             if (ballX > positionX - 25 && ballX < positionX + 200 && ballY == positionY - 25) {
                 ballMoveY = ballMoveY * (-1);
-                //ballMoveX = ballMoveX + (move / 8);
+                //ballMoveX = ballMoveX + (move / 4);
             }
 
 
