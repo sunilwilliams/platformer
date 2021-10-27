@@ -19,7 +19,8 @@ public class Platformer implements KeyListener, Runnable {
     int positionY = 0;
 
     boolean jump = false;
-
+    boolean left = false;
+    boolean right = false;
 
     JLabel youDie = new JLabel();
 
@@ -32,6 +33,7 @@ public class Platformer implements KeyListener, Runnable {
     JFrame frame = new JFrame("Platformer");
     JLabel label = new JLabel();
     JLabel ground = new JLabel();
+    JLabel[] platform = new JLabel[10];
     JLabel[] tailPieces = new JLabel[100000];
 
 
@@ -69,6 +71,22 @@ public class Platformer implements KeyListener, Runnable {
 
 
         frame.add(ground);
+
+        for (int i = 0; i < platform.length; i++) {
+            platform[i] = new JLabel();
+            platform[i].setBounds(600, 700, 200, 50);
+
+        }
+
+        platform[0].setBounds(300, 350, 200, 25);
+        platform[0].setBackground(Color.GREEN);
+        platform[0].setOpaque(true);
+        frame.add(platform[0]);
+
+        platform[1].setBounds(0, 150, 200, 25);
+        platform[1].setBackground(Color.GRAY);
+        platform[1].setOpaque(true);
+        frame.add(platform[1]);
 
 
         frame.setVisible(true);
@@ -131,11 +149,73 @@ public class Platformer implements KeyListener, Runnable {
 
     public boolean touchingGround() {
         boolean touchingGround = false;
-        if (positionY >= 450)
+        if (positionY >= ground.getY() - 55)
             touchingGround = true;
 
         return touchingGround;
     }
+
+    public int[] touchingPlatform() {
+        boolean touchingPlatform = false;
+        int platformNum = 1000;
+        for (int i = 0; i < platform.length; i++) {
+            if (positionX > platform[i].getX() - 50 && positionX < platform[i].getX() + platform[i].getWidth() && positionY >= platform[i].getY() - 60 && positionY <= platform[i].getY()) {
+                touchingPlatform = true;
+                //System.out.println(true);
+                platformNum = i;
+
+            }
+        }
+
+        int[] pos = new int[3];
+
+        if (touchingPlatform) {
+            pos[0] = 1;
+            pos[1] = platform[platformNum].getX();
+            pos[2] = platform[platformNum].getY();
+        } else {
+            pos[0] = 0;
+            pos[1] = 0;
+            pos[2] = 0;
+        }
+
+
+
+        return pos;
+    }
+
+    int touchingNum = 0;
+
+    public int[] touchingPlatformBottom() {
+        boolean touchingPlatform = false;
+        int platformNum = 1000;
+        if (touchingNum > 5) {
+            for (int i = 0; i < platform.length; i++) {
+                if (positionX > platform[i].getX() - 50 && positionX < platform[i].getX() + platform[i].getWidth() && positionY > platform[i].getY() && positionY <= platform[i].getY() + platform[i].getHeight()) {
+                    touchingPlatform = true;
+                    //System.out.println(true);
+                    platformNum = i;
+                    touchingNum = 0;
+
+                }
+            }
+        }
+
+        int[] pos = new int[3];
+
+        if (touchingPlatform) {
+            pos[0] = 1;
+            pos[1] = platform[platformNum].getX();
+            pos[2] = platform[platformNum].getY();
+        } else {
+            pos[0] = 0;
+            pos[1] = 0;
+            pos[2] = 0;
+        }
+
+        return pos;
+    }
+
 
     @Override
     public void keyTyped(KeyEvent e) {
@@ -147,19 +227,30 @@ public class Platformer implements KeyListener, Runnable {
 
         switch (e.getKeyChar()) {
             case 'a': {
-                move = move - 10;
+                left = true;
             }
             break;
             case 'd': {
-                move = move + 10;
+                right = true;
             }
             break;
             case ' ': {
-                if (touchingGround()) {
-                    gravity = -25;
+                if (touchingGround() || touchingPlatform()[0] == 1) {
+
                     jump = true;
                 }
             }
+            break;
+            case 'w': {
+                if (touchingGround() || touchingPlatform()[0] == 1) {
+                    jump = true;
+                }
+            }
+            break;
+            case 'r': {
+                //reset();
+            }
+
         }
     }
 
@@ -172,20 +263,16 @@ public class Platformer implements KeyListener, Runnable {
         }
 
         if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-            move = move - 10;
+            left = true;
         }
         if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-            move = move + 10;
+            right = true;
         }
         if (e.getKeyCode() == KeyEvent.VK_UP) {
-            if (touchingGround()) {
-                gravity = -25;
+            if (touchingGround() || touchingPlatform()[0] == 1) {
+
                 jump = true;
             }
-        }
-        if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-            if (direction != 2)
-                direction = 3;
         }
     }
 
@@ -197,29 +284,45 @@ public class Platformer implements KeyListener, Runnable {
     @Override
     public void run() {
 
-
-
         while (running && alive) {
 
-
-
-
-
         if (touchingGround() && !jump) {
+            gravity = gravity * -1;
             gravity = 0;
             //System.out.println("on ground");
             positionY = 450;
         }
-            //System.out.println(touchingGround());
+
+            if (touchingPlatform()[0] == 1 && !jump) {
+                gravity = 0;
+                positionY = touchingPlatform()[2] - 50;
+            }
+
+            if (touchingPlatformBottom()[0] == 1 && !jump) {
+                gravity = 0;
+            }
+
+            touchingNum++;
+
+            if (jump) {
+                gravity = -25;
+                //System.out.println(true);
+            }
+
+            if (left)
+                move = move - 15;
+
+            if (right)
+                move = move + 15;
+
+
 
         label.setLocation(positionX + (int)move, positionY + (int)gravity);
 
-            //System.out.println(headPositionX + ", " + (int)(headPositionY + gravity));
+        left = false;
+        right = false;
 
             jump = false;
-
-
-
 
             positionX = positionX + (int)move;
             positionY = positionY + (int)gravity;
@@ -229,8 +332,8 @@ public class Platformer implements KeyListener, Runnable {
 
             for (int i = 0; i < 10000; i++) {
                 if (triangleX[i] >= positionX && triangleX[i] <= positionX + 50 && triangleY[i] >= positionY && triangleY[i] <= positionY + 50) {
-                    System.out.println("you die");
-                    youDie();
+                    //System.out.println("you die");
+                    //youDie();
                 }
             }
 

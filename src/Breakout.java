@@ -14,8 +14,8 @@ public class Breakout implements KeyListener, Runnable {
     int ballX = 0;
     int ballY = 0;
 
-    double ballMoveX = 5;
-    double ballMoveY = 5;
+    double ballMoveX = 2;
+    double ballMoveY = 2;
 
 
     JLabel youDie = new JLabel();
@@ -25,6 +25,8 @@ public class Breakout implements KeyListener, Runnable {
     JLabel ball = new JLabel();
     JLabel[][] brick = new JLabel[1000][1000];
     int brickNum = 0;
+
+    JLabel[] shadow = new JLabel[1000000];
 
     public static void main(String[] args) {  //main method
 
@@ -58,10 +60,14 @@ public class Breakout implements KeyListener, Runnable {
         ball.setOpaque(true);
         frame.add(ball);
 
-        for (int x = 0; x < 8; x++) {
-            for (int y = 0; y < 5; y++) {
+        int rows = 5;
+        int columns = 8;
+        int spacing = frame.getWidth() / columns;
+
+        for (int x = 0; x < columns; x++) {
+            for (int y = 0; y < rows; y++) {
                 brick[x][y] = new JLabel();
-                brick[x][y].setBounds(x * 75 , y * 75, 50, 50);
+                brick[x][y].setBounds(x * spacing + 10, y * spacing + 10, 50, 50);
                 //System.out.println(x * 75 + ", " + y * 75);
 
                 brick[x][y].setBackground(Color.ORANGE);
@@ -69,6 +75,26 @@ public class Breakout implements KeyListener, Runnable {
                 frame.add(brick[x][y]);
             }
         }
+
+        for (int i = 0; i < 100; i++) {
+            shadow[i] = new JLabel();
+            shadow[i].setSize(200, 25);
+            frame.add(shadow[i]);
+        }
+
+        int i = 0;
+
+            for (int j = 0; j < 100; j++) {
+
+                shadow[i].setLocation(j + positionX, j + positionY);
+                //System.out.println(h);
+                System.out.println((j) + ", " + j);
+
+                shadow[i].setBackground(Color.LIGHT_GRAY);
+                shadow[i].setOpaque(true);
+                i++;
+            }
+
 
         frame.setVisible(true);
 
@@ -87,8 +113,8 @@ public class Breakout implements KeyListener, Runnable {
 
         ballX = positionX + 100;
         ballY = positionY - 25;
-        ballMoveX = -5;
-        ballMoveY = -5;
+        ballMoveX = -2;
+        ballMoveY = -2;
 
         youDie.setText(null);
 
@@ -126,10 +152,10 @@ public class Breakout implements KeyListener, Runnable {
         }
 
         if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-            move = move - 15;
+            move = move - 5;
         }
         if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-            move = move + 15;
+            move = move + 5;
         }
     }
 
@@ -143,10 +169,24 @@ public class Breakout implements KeyListener, Runnable {
         while (running) {
             //System.out.println(touchingGround());
 
+            int i = 0;
+
+                for (int j = 0; j < 100; j++) {
+
+                    shadow[i].setLocation(j + positionX, j + positionY);
+                    i++;
+                }
+
+
+
             label.setLocation(positionX, positionY);
+            if (positionX < 0)
+                move = 1;
+            if (positionX > frame.getWidth() - 200)
+                move = -1;
 
             positionX = positionX + (int)move;
-            move = move / 1.1;
+            move = move / 1.03;
 
             ballX = ballX + (int)ballMoveX;
             ballY = ballY + (int)ballMoveY;
@@ -163,29 +203,34 @@ public class Breakout implements KeyListener, Runnable {
                 ballMoveX = ballMoveX * (-1);
 
             if (ballY >= frame.getHeight() - 25) {
-                youDie.setText("You Lose");
-                running = false;
+                //youDie.setText("You Lose");
+                //running = false;
+                ballMoveY = ballMoveY * (-1);
             }
 
             if (ballX > positionX - 25 && ballX < positionX + 200 && ballY == positionY - 25) {
                 ballMoveY = ballMoveY * (-1);
-                ballMoveX = ballMoveX + (move / 2);
+                //ballMoveX = ballMoveX + (move / 8);
             }
+
+
 
 
 
             for (int x = 0; x < 8; x++) {
                 for (int y = 0; y < 5; y++) {
                     if (brick[x][y].getWidth() == 50) {
-                        if (ballX > (x * 75) - 25 && ballX < (x * 75) + 25 && ballY > (y * 75) - 25 && ballY < (y * 75) + 25) {
-
-                            if (ballX > (x * 75) - 25 && ballX < (x * 75) + 25) {
-                                brick[x][y].setSize(0, 0);
+                        if (ballX >= brick[x][y].getX() - 25 && ballX <= brick[x][y].getX() + brick[x][y].getWidth()) {
+                            if (ballY == brick[x][y].getY() + brick[x][y].getHeight() || ballY == brick[x][y].getY() + brick[x][y].getHeight() + 1 || ballY == brick[x][y].getY() - 25 || ballY == brick[x][y].getY() - 24) {
                                 ballMoveY = ballMoveY * (-1);
-                            }
-                            if (ballY > (y * 75) - 25 && ballY < (y * 75) + 25) {
                                 brick[x][y].setSize(0, 0);
+                            }
+                        }
+
+                        if (ballY >= brick[y][y].getY() - 25 && ballY <= brick[x][y].getY() + brick[x][y].getHeight()) {
+                            if (ballX == brick[x][y].getX() + brick[x][y].getWidth() || ballX == brick[x][y].getX() + brick[x][y].getWidth() + 1 || ballX == brick[x][y].getX() - 25 || ballX == brick[x][y].getX() - 24) {
                                 ballMoveX = ballMoveX * (-1);
+                                brick[x][y].setSize(0, 0);
                             }
                         }
                     }
@@ -193,11 +238,28 @@ public class Breakout implements KeyListener, Runnable {
             }
 
 
+
+
             try {
-                Thread.sleep(15);
+                Thread.sleep(5);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    public void test() {
+        int x = 0;
+        int y = 0;
+        if (ballX >= brick[x][y].getX() - 25 && ballX <= brick[x][y].getX() + 50 && ballY >= brick[x][y].getY() - 25 && ballY <= brick[x][y].getY() + 50) {
+
+
+            ballMoveY = ballMoveY * (-1);
+
+
+            ballMoveX = ballMoveX * (-1);
+            brick[x][y].setSize(0, 0);
+
         }
     }
 
