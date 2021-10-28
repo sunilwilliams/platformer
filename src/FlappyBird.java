@@ -15,8 +15,8 @@ public class FlappyBird implements KeyListener, Runnable {
     double gravity = 0;
     double move = 0;
 
-    int positionX = 0;
-    int positionY = 0;
+    int positionX = 225;
+    int positionY = 275;
 
     boolean jump = false;
     boolean left = false;
