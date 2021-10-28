@@ -58,6 +58,8 @@ public class ThreeDee implements KeyListener, Runnable {
             double c = (Math.cos(angle - (pi / 2)) * lineNum);
             double d = (Math.sin(angle - (pi / 2)) * lineNum);
 
+            //double c = (Math.cos((pi / 2) - angle) * lineNum);
+            //double d = (Math.sin((pi / 2) - angle) * lineNum);
 
             square[lineGroup][lineNumber].setLocation(x + (int)(4 * (a + c)), y + (int)(4 * (b + d)));
             square[lineGroup][lineNumber].setBackground(Color.BLACK);
@@ -91,7 +93,7 @@ public class ThreeDee implements KeyListener, Runnable {
             angle = angle + pi/64;
 
             try {
-                Thread.sleep(10);
+                Thread.sleep(15);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
