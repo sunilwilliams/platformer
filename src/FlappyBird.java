@@ -22,7 +22,6 @@ public class FlappyBird implements KeyListener, Runnable {
     boolean left = false;
     boolean right = false;
 
-    JLabel score = new JLabel();
 
     JLabel[] triangle = new JLabel[1000000];
     int triangleNum = 0;
@@ -34,7 +33,8 @@ public class FlappyBird implements KeyListener, Runnable {
     JLabel label = new JLabel();
     JLabel ground = new JLabel();
     JLabel[] platform = new JLabel[10];
-    JLabel[] tailPieces = new JLabel[100000];
+
+    JLabel score = new JLabel();
 
 
     public static void main(String[] args) {  //main method
@@ -48,14 +48,6 @@ public class FlappyBird implements KeyListener, Runnable {
         frame.setSize(600, 500);
         frame.setLayout(null);
         frame.addKeyListener(this);
-
-
-
-
-        score.setLocation((frame.getWidth()/2) - 125, (frame.getHeight()/2) - 80);
-        score.setSize((500), (100));
-        score.setFont(new Font("SansSerif", Font.BOLD, 50));
-        frame.add(score);
 
 
         label.setBounds(positionX, positionY, 50, 50);
@@ -87,6 +79,13 @@ public class FlappyBird implements KeyListener, Runnable {
 
         triangle(150, 50, 1);
         triangle(150, 149, -1);
+
+        score.setLocation((frame.getWidth()/2) - 310, (frame.getHeight()/2) - 307);
+        score.setSize((1000), (500));
+        score.setForeground(Color.ORANGE);
+        score.setFont(new Font("SansSerif", Font.BOLD, 500));
+        //frame.setComponentZOrder(score, 5);
+        frame.add(score);
 
 
         frame.setVisible(true);
@@ -229,16 +228,11 @@ public class FlappyBird implements KeyListener, Runnable {
             }
             break;
             case ' ': {
-                if (touchingGround() || touchingPlatform()[0] == 1) {
-
                     jump = true;
-                }
             }
             break;
             case 'w': {
-                if (touchingGround() || touchingPlatform()[0] == 1) {
                     jump = true;
-                }
             }
             break;
             case 'r': {
@@ -274,22 +268,11 @@ public class FlappyBird implements KeyListener, Runnable {
 
         while (running && alive) {
 
-            if (touchingGround()) {
-                System.out.println("you die");
+            if (touchingGround() || touchingPlatform()[0] == 1 || touchingPlatformBottom()[0] == 1) {
+                score.setForeground(Color.BLACK);
+                score.setFont(new Font("SansSerif", Font.BOLD, 10));
                 running = false;
-                score.setText("You Die :(");
-            }
-
-            if (touchingPlatform()[0] == 1) {
-                System.out.println("you die");
-                running = false;
-                score.setText("You Die :(");
-            }
-
-            if (touchingPlatformBottom()[0] == 1) {
-                System.out.println("you die");
-                running = false;
-                score.setText("You Die :(");
+                score.setText("    You Die :(");
             }
 
             touchingNum++;
@@ -318,7 +301,7 @@ public class FlappyBird implements KeyListener, Runnable {
 
             if (counter == 100) {
                 counter = 0;
-                System.out.println("spawn");
+                //System.out.println("spawn");
 
 
 
@@ -340,6 +323,8 @@ public class FlappyBird implements KeyListener, Runnable {
                 if (scoreNum > -1) {
 
                     score.setText(Integer.toString(scoreNum));
+                    score.setForeground(Color.ORANGE);
+                    score.setFont(new Font("SansSerif", Font.BOLD, 500));
                 }
             }
 
