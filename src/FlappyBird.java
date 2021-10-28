@@ -30,7 +30,7 @@ public class FlappyBird implements KeyListener, Runnable {
     int[] triangleX = new int[100000];
     int[] triangleY = new int[100000];
 
-    JFrame frame = new JFrame("Platformer");
+    JFrame frame = new JFrame("Flappy Bird");
     JLabel label = new JLabel();
     JLabel ground = new JLabel();
     JLabel[] platform = new JLabel[10];
@@ -111,17 +111,11 @@ public class FlappyBird implements KeyListener, Runnable {
         //label.setOpaque(true);
         int counter = 100;
         int z = 0;
-        int scoreNum = -2;
-    }
-
-    public void score() {
-        running = false;
-
-        score.setText("You Die");
-
+        int scoreNum = -1;
     }
 
     public void triangle(int x, int y, double sharpness) {
+        int triangleGroup;
         int color = 200;
         double colorDouble = 200;
         for (int h = 0; h < 50; h++) {
@@ -145,12 +139,6 @@ public class FlappyBird implements KeyListener, Runnable {
                 }
             }
         }
-    }
-
-    public void rotate() {
-
-
-
     }
 
     public boolean touchingGround() {
@@ -282,7 +270,7 @@ public class FlappyBird implements KeyListener, Runnable {
     public void run() {
         int counter = 100;
         int z = 0;
-        int scoreNum = -2;
+        int scoreNum = -1;
 
         while (running && alive) {
 
@@ -372,7 +360,7 @@ public class FlappyBird implements KeyListener, Runnable {
             move = move / 1.1;
 
             for (int i = 0; i < 10000; i++) {
-                if (triangleX[i] >= positionX && triangleX[i] <= positionX + 50 && triangleY[i] >= positionY && triangleY[i] <= positionY + 50) {
+                if (triangle[i].getX() >= positionX && triangle[i].getX() <= positionX + 50 && triangle[i].getY() >= positionY && triangle[i].getY() <= positionY + 50) {
                     //System.out.println("you die");
                     //score();
                 }
