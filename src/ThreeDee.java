@@ -36,7 +36,7 @@ public class ThreeDee implements KeyListener, Runnable {
         //line(0, 50, 50, .5);
 
         for (int i = 0; i < 10; i++) {
-            line(0, 50, 50, .5, i);
+            //line(0, 50, 50, .5, i);
         }
 
 
