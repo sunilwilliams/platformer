@@ -112,7 +112,7 @@ public class Pong implements KeyListener, Runnable {
 
             if (ball.getX() == 60 && ball.getY() > player1.getY() && ball.getY() < (player1.getY() + 100)) { //if touching player 1
                 moveX = moveX * -1;
-                moveY = move
+                //moveY = move
             }
 
             if (ball.getX() == 515 && ball.getY() > player2.getY() && ball.getY() < (player2.getY() + 100)) { //if touching player 2

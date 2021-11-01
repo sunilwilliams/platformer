@@ -103,14 +103,13 @@ public class FlappyBird implements KeyListener, Runnable {
 
         running = true;
 
+
+        for (int i = 0; i < 10; i++) {
+            platform[i].setLocation(600, 600);
+        }
         //score.setText(null);
 
-        //label.setBounds(50, 50, 50, 50);
-        //label.setBackground(Color.BLACK);
-        //label.setOpaque(true);
-        int counter = 100;
-        int z = 0;
-        int scoreNum = -1;
+        //label.setBounds(275, 50, 50, 50);
     }
 
     public void triangle(int x, int y, double sharpness) {
@@ -236,7 +235,7 @@ public class FlappyBird implements KeyListener, Runnable {
             }
             break;
             case 'r': {
-                //reset();
+                reset();
             }
 
         }
@@ -278,7 +277,7 @@ public class FlappyBird implements KeyListener, Runnable {
             touchingNum++;
 
             if (jump) {
-                gravity = -10;
+                gravity = -12;
                 //System.out.println(true);
             }
 
